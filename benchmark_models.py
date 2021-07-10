@@ -13,7 +13,7 @@ from torch.utils.data import Dataset, DataLoader
 import json
 torch.backends.cudnn.benchmark = True
 # https://discuss.pytorch.org/t/what-does-torch-backends-cudnn-benchmark-do/5936
-# This flag allows you to enable the inbuilt cudnn auto-tuner to find the best algorithm to use for your hardware. 
+# This flag allows you to enable the inbuilt cudnn auto-tuner to find the best algorithm to use for your hardware.
 # If you check it using the profile tool, the cnn method such as winograd, fft, etc. is used for the first iteration and the best operation is selected for the device.
 
 
@@ -25,7 +25,7 @@ MODEL_LIST = {
     models.densenet: models.densenet.__all__[1:],
     models.squeezenet: models.squeezenet.__all__[1:],
     models.vgg: models.vgg.__all__[1:],
-    models.mobilenet:models.mobilenet.__all__[1:],
+    models.mobilenet:[models.mobilenet.__all__[1]]+models.mobilenet.__all__[3:],
     models.shufflenetv2:models.shufflenetv2.__all__[1:]
 }
 
@@ -120,7 +120,7 @@ f"{platform.uname()}\n{psutil.cpu_freq()}\ncpu_count: {psutil.cpu_count()}\nmemo
 
 if __name__ == '__main__':
     folder_name=args.folder
-    
+
     device_name=f"{device_name}_{args.NUM_GPU}_gpus_"
     system_configs=f"{platform.uname()}\n\
                      {psutil.cpu_freq()}\n\
@@ -134,9 +134,9 @@ if __name__ == '__main__':
     with open(os.path.join(folder_name, 'config.json'), 'w') as f:
         json.dump(vars(args), f, indent=2)
     now = datetime.datetime.now()
-    
+
     start_time=now.strftime('%Y/%m/%d %H:%M:%S')
-    
+
     print(f'benchmark start : {start_time}')
 
     for idx,value in enumerate(zip(temp,gpu_configs)):
@@ -151,7 +151,7 @@ if __name__ == '__main__':
         f.writelines('\ngpu_configs\n\n')
         f.writelines(s + '\n' for s in gpu_configs )
 
-    
+
     for precision in precisions:
         train_result=train(precision)
         train_result_df = pd.DataFrame(train_result)
